@@ -18,10 +18,14 @@ let failedRequestsQueue: FailedResponseQueue[] = [];
 
 export const api = axios.create({
   baseURL: 'http://localhost:3333',
-  headers: {
+  /*headers: {
     Authorization: `Bearer ${cookies['nextauth.token']}`
-  }
+  }*/
 })
+
+// Header must be here, so all modifications will act just in time.
+// Otherwelse, they will maintaim `Bearer undefined` until refresh page...
+api.defaults.headers.common['Authorization'] = `Bearer ${cookies['nextauth.token']}`;
 
 api.interceptors.response.use(response => {
   return response
