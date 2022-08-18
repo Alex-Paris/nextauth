@@ -1,7 +1,7 @@
 import Router from "next/router";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { destroyCookie, parseCookies, setCookie } from 'nookies'
-import { api } from "../services/api";
+import { api } from "../services/apiClient";
 
 type User = {
   email: string;
@@ -27,6 +27,11 @@ type AuthProviderProps = {
 export const AuthContext = createContext({} as AuthContextData);
 
 export function signOut() {
+  // Execute it only in browser.
+  if (typeof window === 'undefined') {
+    return;
+  }
+
   destroyCookie(undefined, 'nextauth.token')
   destroyCookie(undefined, 'nextauth.refreshToken')
 
