@@ -1,5 +1,4 @@
 import axios, { AxiosError } from "axios";
-import { NextPageContext } from "next";
 import { parseCookies, setCookie } from "nookies";
 
 import { signOut } from "../contexts/AuthContext";
@@ -30,6 +29,16 @@ export function setupAPIClient(ctx: any = undefined) {
   // Otherwelse, they will maintaim `Bearer undefined` until refresh page...
   api.defaults.headers.common['Authorization'] = `Bearer ${cookies['nextauth.token']}`;
 
+  // Intercpt all requests before use of API
+  api.interceptors.request.use(response => {
+    let cookies = parseCookies(ctx);
+
+    api.defaults.headers.common['Authorization'] = `Bearer ${cookies['nextauth.token']}`;
+
+    return response
+  })
+
+  // Intercpt all responses of API
   api.interceptors.response.use(response => {
     return response
   }, (error: AxiosError<AxiosErrorResponse>) => {
@@ -68,6 +77,11 @@ export function setupAPIClient(ctx: any = undefined) {
               failedRequestsQueue = []
 
               signOut()
+
+              // Execute at server-side
+              if (typeof window === 'undefined') {
+                return Promise.reject(err)
+              }
             })
             .finally(() => {
               isRefreshing = false

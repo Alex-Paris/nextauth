@@ -27,14 +27,13 @@ type AuthProviderProps = {
 export const AuthContext = createContext({} as AuthContextData);
 
 export function signOut() {
-  // Execute it only in browser.
+  // If it's server-side, ignore
   if (typeof window === 'undefined') {
     return;
   }
 
   destroyCookie(undefined, 'nextauth.token')
   destroyCookie(undefined, 'nextauth.refreshToken')
-
   Router.push('/')
 }
 

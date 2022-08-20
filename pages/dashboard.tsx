@@ -1,4 +1,3 @@
-import { parseCookies } from "nookies"
 import { useContext, useEffect } from "react"
 
 import { AuthContext } from "../contexts/AuthContext"
@@ -22,9 +21,7 @@ export default function Dashboard() {
 export const getServerSideProps = withSSRAuth(async (ctx) => {
   const apiClient = setupAPIClient(ctx)
 
-  apiClient
-    .get('/me')
-    .then(response => console.log(response))
+  const response = await apiClient.get('/me')
 
   return {
     props: {
